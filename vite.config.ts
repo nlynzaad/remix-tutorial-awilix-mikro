@@ -15,4 +15,7 @@ export default defineConfig({
     }),
     envOnlyMacros(),
   ],
+  build: {
+    target: 'esnext'
+  },
 });
