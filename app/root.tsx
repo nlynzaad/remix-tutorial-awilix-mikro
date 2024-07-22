@@ -17,13 +17,12 @@ import {useEffect} from "react";
 import { serverOnly$ } from 'vite-env-only/macros';
 import {DiContext, diMiddleware} from "~/middleware/di/di.server";
 
-export const middleware = serverOnly$([
-	diMiddleware
-])
+export const middleware = serverOnly$([diMiddleware])
 
 export const links: LinksFunction = () => [{rel: 'stylesheet', href: appStylesHref}];
 
 export const loader = async ({request, context}: LoaderFunctionArgs) => {
+
 	const contactQueryService = context.get(DiContext).contactQueryService;
 	const url = new URL(request.url);
 	const q = url.searchParams.get("q");

@@ -3,22 +3,20 @@ import {config} from "./config";
 
 export interface IDbService extends EntityManager {}
 
-interface Orm {
-	orm: MikroORM;
-	em: EntityManager;
-}
+export class DbConnector {
+	static #orm: MikroORM;
 
-let cache: Orm;
-
-export async function initORM(options?: Options) {
-	if (cache) {
-		return cache;
+	static async init(options?: Options) {
+		if (!this.#orm) {
+			this.#orm = await MikroORM.init({...config, ...options});
+		}
 	}
 
-	const orm = await MikroORM.init({...config, ...options});
+	static get orm() {
+		if (!this.#orm) {
+			throw new Error("Orm is not initialized!")
+		}
 
-	return (cache = {
-		orm,
-		em: orm.em,
-	});
+		return this.#orm;
+	}
 }

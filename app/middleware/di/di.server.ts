@@ -7,7 +7,7 @@ import {ApplicationDiModules, type IApplicationDiModules} from "~/.server/applic
 
 export type IDiContainer = IApplicationDiModules & IDomainDiModules & IInfrastructureDiModules;
 
-const diContainer = createContainer<IDiContainer>().register({
+export const diContainer = createContainer<IDiContainer>().register({
 	...ApplicationDiModules,
 	...DomainDiModules,
 	...InfrastructureDiModules
@@ -15,7 +15,7 @@ const diContainer = createContainer<IDiContainer>().register({
 
 export const DiContext = createContext<IDiContainer>();
 
-export const diMiddleware = ({context, next}: MiddlewareFunctionArgs) => {
+export const diMiddleware = async ({context, next}: MiddlewareFunctionArgs) => {
 	context.set(DiContext, diContainer.createScope().cradle)
 	return next();
 }

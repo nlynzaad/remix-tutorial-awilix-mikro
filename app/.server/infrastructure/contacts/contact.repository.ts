@@ -2,17 +2,17 @@ import { IContact } from "~/.server/domain/contacts/Contact";
 import type {IContactRepository} from "~/.server/domain/contacts/IContactRepository";
 import {ID} from "~/.server/domain/shared/ID";
 import {Result} from "~/.server/domain/shared/Result";
-import type {IDbService} from "~/.server/infrastructure/database/db";
 //@ts-expect-error mikro-orm cli expects file extension
 import {contactEntity} from "~/.server/infrastructure/contacts/contact.entity.ts";
 import {ValidationError} from "zod-validation-error";
 import {wrap} from "@mikro-orm/core";
+import type {IDbService} from "~/.server/infrastructure/database/db";
 
 type InjectedDependencies = {
-    dbService: Promise<IDbService>;
+    dbService: IDbService;
 }
 export class ContactRepository implements IContactRepository {
-	#dbService: Promise<IDbService>;
+	#dbService: IDbService;
 
 	constructor({dbService}: InjectedDependencies) {
         this.#dbService = dbService;
@@ -20,7 +20,7 @@ export class ContactRepository implements IContactRepository {
 
     async findByName(name: string): Promise<Result<IContact[]>> {
         try {
-            const contacts = await (await this.#dbService).find<IContact>(contactEntity.name, { $or: [
+            const contacts = await this.#dbService.find<IContact>(contactEntity.name, { $or: [
                     {first: { $like: name}},
                     {last: { $like: name}}
             ]})
@@ -41,7 +41,7 @@ export class ContactRepository implements IContactRepository {
 
     async findOne(Id: ID): Promise<Result<IContact>> {
         try {
-            const contact = await (await this.#dbService).findOne<IContact>(contactEntity.name, Id)
+            const contact = await this.#dbService.findOne<IContact>(contactEntity.name, Id)
 
             if (!contact) {
                 return {error: new ValidationError('Contact not found')}
@@ -63,7 +63,8 @@ export class ContactRepository implements IContactRepository {
 
     async findAll(): Promise<Result<IContact[]>> {
         try {
-            const contacts = await (await this.#dbService).findAll<IContact>(contactEntity.name)
+            console.log(this.#dbService)
+            const contacts = await this.#dbService.findAll<IContact>(contactEntity.name)
 
             if (!contacts) {
                 return {error: new ValidationError('No contacts found')}
@@ -85,7 +86,7 @@ export class ContactRepository implements IContactRepository {
 
     async create(data: IContact): Promise<Result<IContact>> {
         try {
-            const contact = (await this.#dbService).create<IContact>(contactEntity.name, {...data, id: data.id})
+            const contact = this.#dbService.create<IContact>(contactEntity.name, {...data, id: data.id})
 
             if (!contact) {
                 return {error: new ValidationError('Error creating contact')}
@@ -107,7 +108,7 @@ export class ContactRepository implements IContactRepository {
 
     async update(Id: ID, data: IContact): Promise<Result<IContact>> {
         try {
-            const contact = await (await this.#dbService).findOne<IContact>(contactEntity.name, Id)
+            const contact = await this.#dbService.findOne<IContact>(contactEntity.name, Id)
 
             if (!contact) {
                 return {error: new ValidationError('Error finding contact')}
@@ -129,13 +130,13 @@ export class ContactRepository implements IContactRepository {
 
     async delete(Id: ID): Promise<Result<boolean>> {
         try {
-            const contact = await (await this.#dbService).findOne<IContact>(contactEntity.name, Id)
+            const contact = await this.#dbService.findOne<IContact>(contactEntity.name, Id)
 
             if (!contact) {
                 return {error: new ValidationError('Error finding contact')}
             }
 
-            (await this.#dbService).remove<IContact>(contact);
+            this.#dbService.remove<IContact>(contact);
 
             return true;
         } catch (e) {
@@ -152,6 +153,6 @@ export class ContactRepository implements IContactRepository {
     }
 
     async save(): Promise<Result<void>> {
-        await (await this.#dbService).flush();
+        await this.#dbService.flush();
     }
 }
