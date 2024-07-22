@@ -20,12 +20,10 @@ export class ContactRepository implements IContactRepository {
 
     async findByName(name: string): Promise<Result<IContact[]>> {
         try {
-            const contacts = await this.#dbService.find<IContact>(contactEntity.name, { $or: [
+            return await this.#dbService.find<IContact>(contactEntity.name, { $or: [
                     {first: { $like: name}},
                     {last: { $like: name}}
             ]})
-
-            return contacts;
         } catch (e) {
             if (e instanceof ValidationError) {
                 return {error: e}
@@ -63,7 +61,6 @@ export class ContactRepository implements IContactRepository {
 
     async findAll(): Promise<Result<IContact[]>> {
         try {
-            console.log(this.#dbService)
             const contacts = await this.#dbService.findAll<IContact>(contactEntity.name)
 
             if (!contacts) {
