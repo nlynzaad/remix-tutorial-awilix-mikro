@@ -3,3 +3,8 @@ node_modules
 /.cache
 /build
 .env
+
+.idea
+.vscode
+**/database/migrations
+database/
