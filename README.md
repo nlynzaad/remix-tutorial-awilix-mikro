@@ -19,6 +19,10 @@ npx mikro-orm-esm migration:create
 ```shellscript s
 npx mikro-orm-esm migration:up
 ``` 
+4) seed the database
+```shellscript s
+npx mikro-orm-esm seeder:run
+``` 
 
 ## Development
 
