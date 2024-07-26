@@ -1,3 +1,5 @@
+// noinspection SpellCheckingInspection
+
 import {EntityManager, MikroORM, Options} from '@mikro-orm/better-sqlite';
 import {config} from "./config";
 

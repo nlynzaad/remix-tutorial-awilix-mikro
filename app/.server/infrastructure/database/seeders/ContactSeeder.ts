@@ -1,3 +1,5 @@
+// noinspection SpellCheckingInspection
+
 import {Seeder} from "@mikro-orm/seeder";
 import {EntityManager} from "@mikro-orm/core";
 import {generateId} from "@domain/shared/ID";

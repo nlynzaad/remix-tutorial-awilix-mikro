@@ -1,3 +1,5 @@
+// noinspection SpellCheckingInspection
+
 import {PassThrough} from "node:stream";
 
 import type {AppLoadContext, EntryContext} from "@remix-run/node";
@@ -33,7 +35,7 @@ export const server = createExpressApp({
 			}
 		}))
 		app.disable('x-powered-by')
-		app.use((req, res, next) => {
+		app.use((_req, _res, next) => {
 			RequestContext.create(DbConnector.orm.em, next);
 		})
 	},
@@ -42,7 +44,7 @@ export const server = createExpressApp({
 
 const ABORT_DELAY = 5_000;
 
-// noinspection JSUnusedLocalSymbols
+// noinspection JSUnusedLocalSymbols,JSUnusedGlobalSymbols
 export default function handleRequest(
 	request: Request,
 	responseStatusCode: number,
@@ -51,7 +53,7 @@ export default function handleRequest(
 	// This is ignored, so we can keep it in the template for visibility.  Feel
 	// free to delete this parameter in your app if you're not using it!
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	loadContext: AppLoadContext
+	_loadContext: AppLoadContext
 ) {
 	const prohibitOutOfOrderStreaming =
 		isBotRequest(request.headers.get("user-agent")) || remixContext.isSpaMode;
@@ -71,7 +73,7 @@ export default function handleRequest(
 		);
 }
 
-// We have some Remix apps in the wild already running with isbot@3 so we need
+// We have some Remix apps in the wild already running with isbot@3, so we need
 // to maintain backwards compatibility even though we want new apps to use
 // isbot@4.  That way, we can ship this as a minor Semver update to @remix-run/dev.
 function isBotRequest(userAgent: string | null) {
@@ -98,6 +100,7 @@ function handleBotRequest(
 	responseHeaders: Headers,
 	remixContext: EntryContext
 ) {
+	// noinspection DuplicatedCode
 	return new Promise((resolve, reject) => {
 		let shellRendered = false;
 		const {pipe, abort} = renderToPipeableStream(
@@ -148,6 +151,7 @@ function handleBrowserRequest(
 	responseHeaders: Headers,
 	remixContext: EntryContext
 ) {
+	// noinspection DuplicatedCode
 	return new Promise((resolve, reject) => {
 		let shellRendered = false;
 		const {pipe, abort} = renderToPipeableStream(
