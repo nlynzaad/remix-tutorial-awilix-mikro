@@ -1,10 +1,10 @@
 import {asClass, asFunction, Lifetime} from "awilix";
-import {DbConnector} from "~/.server/infrastructure/database/db";
-import {ContactRepository} from "~/.server/infrastructure/contacts/contact.repository";
+import {DbConnector} from "@infrastructure/database/db";
+import {ContactRepository} from "@infrastructure/contacts/contact.repository";
 
 import type {NameAndRegistrationPair} from "awilix";
-import type {IDbService} from "~/.server/infrastructure/database/db";
-import type {IContactRepository} from "~/.server/domain/contacts/IContactRepository";
+import type {IDbService} from "@infrastructure/database/db";
+import type {IContactRepository} from "@domain/contacts/IContactRepository";
 
 export interface IInfrastructureDiModules {
 	dbService: IDbService,

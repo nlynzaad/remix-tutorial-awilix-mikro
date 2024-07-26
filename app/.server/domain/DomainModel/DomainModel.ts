@@ -1,12 +1,11 @@
-import {generateId, type ID} from "~/.server/domain/shared/ID";
-import type {Exact} from "type-fest";
-import type {Result, UpdateResult} from "~/.server/domain/shared/Result";
-import { isEqual } from "~/.server/shared/objects/isEqual";
+import {generateId, type ID} from "@domain/shared/ID";
+import { isEqual } from "@shared/objects/isEqual";
+import type {Result, UpdateResult} from "@domain/shared/Result";
 
 export interface IDomainModel {
 	id: ID,
-	createdAt?: Date | undefined,
-	updatedAt?: Date | undefined,
+	createdAt: Date,
+	updatedAt: Date,
 }
 
 export interface IDomainService<T, U> {
@@ -16,10 +15,10 @@ export interface IDomainService<T, U> {
 
 export abstract class DomainModel<T extends IDomainModel> implements IDomainModel  {
 	id: ID;
-	createdAt: Date | undefined;
-	updatedAt: Date | undefined;
+	createdAt: Date;
+	updatedAt: Date;
 
-	protected constructor(domainModel?: IDomainModel) {
+	protected constructor(domainModel?: T) {
 		if (domainModel) {
 			this.id = domainModel.id;
 			this.updatedAt = domainModel.updatedAt;
@@ -33,7 +32,7 @@ export abstract class DomainModel<T extends IDomainModel> implements IDomainMode
 		this.updatedAt = new Date();
 	}
 
-	abstract update<V extends Exact<T, V>>(entity: V): UpdateResult;
+	abstract update<V extends Omit<T,'id' | 'updatedAt' | 'createdAt'>>(entity: V): UpdateResult;
 
 	isEqual(other: T): boolean {
 		return isEqual(this, other);

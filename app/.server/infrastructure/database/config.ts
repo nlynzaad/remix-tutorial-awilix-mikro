@@ -1,22 +1,11 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck mikro-orm cli expects file extension for listed entities
-import {defineConfig, EntityCaseNamingStrategy, ReflectMetadataProvider} from "@mikro-orm/better-sqlite";
+import {defineConfig, ReflectMetadataProvider} from "@mikro-orm/better-sqlite";
 import {Migrator} from "@mikro-orm/migrations";
-import pluralize from "pluralize";
 
-import {contactEntity} from '../contacts/contact.entity.ts';
-
-import type {NamingStrategy} from "@mikro-orm/better-sqlite";
 import {SeedManager} from "@mikro-orm/seeder";
-
-class TableNamingStrategy extends EntityCaseNamingStrategy implements NamingStrategy {
-	classToTableName(entityName: string): string {
-		return `tbl` + pluralize(entityName);
-	}
-}
+import {contactEntity} from "@infrastructure/contacts/contact.entity";
 
 export const config = defineConfig({
-	entities: [contactEntity.schema],
+	entities: [contactEntity],
 	dbName: './database/contacts.db',
 	migrations: {
 		path: './app/.server/infrastructure/database/migrations',
@@ -27,6 +16,5 @@ export const config = defineConfig({
 	},
 	extensions: [Migrator, SeedManager],
 	metadataProvider: ReflectMetadataProvider,
-	namingStrategy: TableNamingStrategy,
 	forceUndefined: true
 });

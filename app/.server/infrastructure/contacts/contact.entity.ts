@@ -1,13 +1,11 @@
 import {EntitySchema} from "@mikro-orm/core";
-import type {IContact} from "~/.server/domain/contacts/Contact.ts";
+import {Contact} from "@domain/contacts/Contact";
 
-const entityName = 'Contact';
-
-const contactEntitySchema = new EntitySchema<IContact>({
-	name: entityName,
+export const contactEntity = new EntitySchema<Contact>({
+	class: Contact,
 	tableName: 'tblContacts',
 	properties: {
-		id: {type: 'uuid', primary: true},
+		id: {type: 'uuid', primary: true, name: 'pkiContactId'},
 		first: {type: 'string', name: 'txtFirstname'},
 		last: {type: 'string', name: 'txtLastname'},
 		avatar: {type: 'string', name: 'txtAvatarUrl'},
@@ -18,5 +16,3 @@ const contactEntitySchema = new EntitySchema<IContact>({
 		updatedAt: {type: 'datetime', name: 'dteUpdatedBy', onCreate: () => new Date(), onUpdate: () => new Date()},
 	}
 });
-
-export const contactEntity = {name: entityName, schema: contactEntitySchema};

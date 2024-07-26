@@ -1,10 +1,11 @@
-import {DomainModel} from "~/.server/domain/shared/DomainModel/DomainModel";
-import {contactValidator, newContactValidator} from "~/.server/domain/contacts/validation";
-import {staticImplements} from "~/.server/shared/classes/staticImplements";
+import {DomainModel} from "@domain/DomainModel/DomainModel";
+import {contactValidator, newContactValidator} from "@domain/contacts/validation";
+import {staticImplements} from "@shared/classes/staticImplements";
 
-import type {IDomainModel, IDomainService} from "~/.server/domain/shared/DomainModel/DomainModel";
 import type {Exact} from "type-fest";
-import type {ID} from "~/.server/domain/shared/ID";
+import type {IDomainModel, IDomainService} from "@domain/DomainModel/DomainModel";
+import type {ID} from "@domain/shared/ID";
+import type {UpdateResult} from "@domain/shared/Result";
 
 type ContactFields = {
 	first: string,
@@ -17,56 +18,53 @@ type ContactFields = {
 
 export type ContactId = ID;
 
-export interface IContact extends IDomainModel, ContactFields {}
+type UserModel = IDomainModel & ContactFields
 
 export type NewContact = ContactFields
 
-export type UpdateContact = Omit<ContactFields, 'id'>
+export type UpdateContact = Omit<UserModel, 'id' | 'createdAt' | 'updatedAt'>
 
-export class Contact extends DomainModel<IContact> implements Contact {
+export class Contact extends DomainModel<UserModel> {
 	first!: string;
 	last!: string;
 	avatar!: string;
-	twitter: string | undefined;
-	notes: string | undefined;
-	favourite: boolean | undefined;
+	twitter?: string | undefined;
+	notes?: string | undefined;
+	favourite?: boolean | undefined;
 
-	constructor(contact: IContact | NewContact | Contact) {
+	constructor(contact: UserModel | NewContact | Contact) {
 		super('id' in contact && contact.id ? contact as unknown as Contact : undefined);
 		this.first = contact.first;
 		this.last = contact.last;
 		this.avatar = contact.avatar;
 		this.twitter = contact.twitter;
 		this.notes = contact.notes;
-		this.favourite = contact.favourite ?? false;
+		this.favourite = contact.favourite;
 	}
 
-	update<T extends Exact<IContact, T>>(contact: T) {
+	update(contact: UpdateContact): UpdateResult {
 		const validationResult = contactValidator(contact);
 
 		if ('error' in validationResult && validationResult.error) {
 			return {error: validationResult.error}
 		}
 
-		this.id = contact.id;
-		this.createdAt = contact.createdAt;
-		this.updatedAt = contact.updatedAt;
 		this.first = contact.first;
 		this.last = contact.last;
 		this.avatar = contact.avatar;
 		this.twitter = contact.twitter;
 		this.notes = contact.notes;
-		this.favourite = contact.favourite ?? false;
+		this.favourite = contact.favourite;
 
 		return true;
 	}
 }
 
-export type IContactDomainService = IDomainService<Contact, IContact>;
+export type IContactDomainService = IDomainService<Contact, UserModel>;
 
 @staticImplements<IContactDomainService>()
 export class ContactDomainService {
-	static from(contact: IContact) {
+	static from(contact: UserModel) {
 		const validationResult = contactValidator(contact);
 
 		if (validationResult.error) {

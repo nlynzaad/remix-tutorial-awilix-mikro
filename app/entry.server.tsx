@@ -9,7 +9,7 @@ import {createExpressApp} from "remix-create-express-app";
 import type {ServerContext} from "remix-create-express-app/context";
 import compression from "compression";
 import 'reflect-metadata';
-import {DbConnector} from "~/.server/infrastructure/database/db";
+import {DbConnector} from "@infrastructure/database/db";
 import {RequestContext} from "@mikro-orm/core";
 
 declare module '@remix-run/node' {
@@ -42,12 +42,13 @@ export const server = createExpressApp({
 
 const ABORT_DELAY = 5_000;
 
+// noinspection JSUnusedLocalSymbols
 export default function handleRequest(
 	request: Request,
 	responseStatusCode: number,
 	responseHeaders: Headers,
 	remixContext: EntryContext,
-	// This is ignored so we can keep it in the template for visibility.  Feel
+	// This is ignored, so we can keep it in the template for visibility.  Feel
 	// free to delete this parameter in your app if you're not using it!
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	loadContext: AppLoadContext

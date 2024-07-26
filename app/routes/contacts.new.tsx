@@ -1,8 +1,8 @@
 import {type ActionFunctionArgs, redirect} from "@remix-run/node";
 import {Form, useNavigate} from "@remix-run/react";
 import {DiContext} from "~/middleware/di/di.server";
-import {newContactValidator} from "~/.server/domain/contacts/validation";
-import type {NewContact} from "~/.server/domain/contacts/Contact";
+import {newContactValidator} from "@domain/contacts/validation";
+import type {NewContact} from "@domain/contacts/Contact";
 
 export const action = async ({request, context}: ActionFunctionArgs) => {
 	const contactActionService = context.get(DiContext).contactActionService;

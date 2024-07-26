@@ -1,18 +1,16 @@
 import {Seeder} from "@mikro-orm/seeder";
 import {EntityManager} from "@mikro-orm/core";
-// @ts-expect-error mikro-orm cli expects file extension
-import {contactEntity} from "../../contacts/contact.entity.ts";
-// @ts-expect-error mikro-orm cli expects file extension
-import {generateId} from "../../../domain/shared/ID.ts";
-import type {IContact} from "../../../domain/contacts/Contact";
+import {generateId} from "@domain/shared/ID";
+import {Contact} from "@domain/contacts/Contact";
 
 export class ContactSeeder extends Seeder {
 	async run(em: EntityManager): Promise<void> {
-		const contactsInDb = await em.count<IContact>(contactEntity.name);
+		const contactsInDb = await em.count(Contact);
 
 		if (!contactsInDb || contactsInDb === 0) {
 			contactData.forEach((contact) => {
-				em.create(contactEntity.name, {id: generateId(), ...contact});
+
+				em.create(Contact, {id: generateId(), ...contact, createdAt: new Date(), updatedAt: new Date()});
 			})
 		}
 	}

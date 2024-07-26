@@ -1,7 +1,7 @@
-import type {IContact} from "~/.server/domain/contacts/Contact";
-import type {IGenericRepository} from "~/.server/domain/shared/GenericRepository/IGenericRepository";
-import type {Result} from "~/.server/domain/shared/Result";
+import type {Contact} from "@domain/contacts/Contact";
+import type {GenericRepository} from "@domain/GenericRepository/GenericRepository";
+import type {Result} from "@domain/shared/Result";
 
-export interface IContactRepository extends IGenericRepository<IContact> {
-	findByName(name: string): Promise<Result<IContact[]>>;
+export interface IContactRepository extends GenericRepository<Contact> {
+	findByName(name: string): Promise<Result<Contact[]>>;
 }

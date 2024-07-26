@@ -23,7 +23,11 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "@domain/*": ["./app/.server/domain/*"],
+      "@infrastructure/*": ["./app/.server/infrastructure/*"],
+      "@application/*": ["./app/.server/application/*"],
+      "@shared/*": ["./app/.server/shared/*"]
     },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

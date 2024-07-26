@@ -1,12 +1,12 @@
-import {Form, json, useFetcher, useLoaderData} from "@remix-run/react";
-import {type FunctionComponent} from "react";
-
-import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
+import {json, useFetcher, useLoaderData, useNavigate} from "@remix-run/react";
 import invariant from "tiny-invariant";
-import {DiContext} from "~/middleware/di/di.server";
-import type {IContact} from "~/.server/domain/contacts/Contact";
+import type {FunctionComponent} from "react";
+import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 
-export const loader = async ({ params, context}: LoaderFunctionArgs) => {
+import {DiContext} from "~/middleware/di/di.server";
+import type {Contact} from "@domain/contacts/Contact";
+
+export const loader = async ({params, context}: LoaderFunctionArgs) => {
 	const contactQueryService = context.get(DiContext).contactQueryService;
 
 	invariant(params.contactId, "Missing contactId parameter");
@@ -14,10 +14,10 @@ export const loader = async ({ params, context}: LoaderFunctionArgs) => {
 	const contact = await contactQueryService.getContact(params.contactId);
 
 	if (contact.error) {
-		throw new Response(contact.error.message, { status: 404 });
+		throw new Response(contact.error.message, {status: 404});
 	}
 
-	return json({ contact });
+	return json({contact});
 };
 
 export const action = async ({params, request, context}: ActionFunctionArgs) => {
@@ -30,8 +30,9 @@ export const action = async ({params, request, context}: ActionFunctionArgs) => 
 	return contactActionService.toggleFavourite(params.contactId, formData.get("favourite") === "true");
 }
 
-export default function Contact() {
-	const { contact } = useLoaderData<typeof loader>();
+export default function ContactPage() {
+	const navigate = useNavigate();
+	const {contact} = useLoaderData<typeof loader>();
 
 	return (
 		<div id="contact">
@@ -52,7 +53,7 @@ export default function Contact() {
 					) : (
 						<i>No Name</i>
 					)}{" "}
-					<Favourite contact={contact} />
+					<Favourite contact={contact}/>
 				</h1>
 
 				{contact.twitter ? (
@@ -68,24 +69,18 @@ export default function Contact() {
 				{contact.notes ? <p>{contact.notes}</p> : null}
 
 				<div>
-					<Form action="edit">
-						<button type="submit">Edit</button>
-					</Form>
-
-					<Form
-						action="destroy"
-						method="post"
-						onSubmit={(event) => {
-							const response = confirm(
-								"Please confirm you want to delete this record."
-							);
-							if (!response) {
-								event.preventDefault();
-							}
-						}}
-					>
-						<button type="submit">Delete</button>
-					</Form>
+					<button type="button" onClick={() => navigate('./edit')}>Edit</button>
+					<button type="button" className={'destroy'} onClick={(event) => {
+						const response = confirm(
+							"Please confirm you want to delete this record."
+						);
+						if (!response) {
+							event.preventDefault();
+						}
+						navigate('./destroy')
+					}}>
+						Delete
+					</button>
 				</div>
 			</div>
 		</div>
@@ -93,8 +88,8 @@ export default function Contact() {
 }
 
 const Favourite: FunctionComponent<{
-	contact: Pick<IContact, "favourite">;
-}> = ({ contact }) => {
+	contact: Pick<Contact, "favourite">;
+}> = ({contact}) => {
 	const fetcher = useFetcher();
 	const favourite = fetcher.formData
 		? fetcher.formData.get("favourite") === "true"

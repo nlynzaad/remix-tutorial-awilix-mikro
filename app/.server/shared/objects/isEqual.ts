@@ -1,5 +1,5 @@
-import {isEqual as radashIsEqual} from "radash";
+import {isEqual as rIsEqual} from "radash";
 
 export const isEqual = (value: unknown, other: unknown): boolean => {
-	return radashIsEqual(value, other)
+	return rIsEqual(value, other)
 }

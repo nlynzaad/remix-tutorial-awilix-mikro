@@ -4,8 +4,8 @@ import {Form, useLoaderData, useNavigate} from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import {DiContext} from "~/middleware/di/di.server";
-import {contactValidator} from "~/.server/domain/contacts/validation";
-import type {IContact} from "~/.server/domain/contacts/Contact";
+import {updateContactValidator} from "@domain/contacts/validation";
+import type {Contact} from "@domain/contacts/Contact";
 
 export const loader = async ({params, context}: LoaderFunctionArgs) => {
 	const contactQueryService = context.get(DiContext).contactQueryService;
@@ -27,16 +27,16 @@ export const action = async ({params, request, context}: ActionFunctionArgs) => 
 	invariant(params.contactId, "Missing contactId param");
 	const formData = await request.formData();
 	console.log('formData: ', formData)
-	const updates = contactValidator({...Object.fromEntries(formData), id: params.contactId} as unknown as IContact);
+	const updates = updateContactValidator(Object.fromEntries(formData));
 
 	if (updates.error) {
-		throw new Response(updates.error.message, { status: 404 });
+		throw new Response(updates.error.message, {status: 404});
 	}
 
-	const updatedUser = await contactActionService.updateContact(params.contactId, updates);
+	const updatedUser = await contactActionService.updateContact(params.contactId, updates as Contact);
 
 	if (updatedUser.error) {
-		throw new Response(updatedUser.error.message, { status: 404 });
+		throw new Response(updatedUser.error.message, {status: 404});
 	}
 
 	return redirect(`/contacts/${updatedUser.id}`);

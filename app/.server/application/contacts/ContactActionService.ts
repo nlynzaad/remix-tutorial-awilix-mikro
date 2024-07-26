@@ -1,7 +1,7 @@
-import type {Result} from "~/.server/domain/shared/Result";
-import type {ContactId, IContact, IContactDomainService, NewContact} from "~/.server/domain/contacts/Contact";
-import type {IContactRepository} from "~/.server/domain/contacts/IContactRepository";
-import type {IContactActionService} from "~/.server/domain/contacts/IContactActionService";
+import type {Result} from "@domain/shared/Result";
+import type {ContactId, Contact, IContactDomainService, NewContact, UpdateContact} from "@domain/contacts/Contact";
+import type {IContactRepository} from "@domain/contacts/IContactRepository";
+import type {IContactActionService} from "@domain/contacts/IContactActionService";
 
 type InjectedDependencies = {
 	contactDomainService: IContactDomainService;
@@ -18,7 +18,7 @@ export class ContactActionService implements IContactActionService {
 	}
 
 	async toggleFavourite(contactId: ContactId, favourite: boolean): Promise<Result<boolean>> {
-		const dbResult = await this.#contactRepository.update(contactId, {id: contactId, favourite});
+		const dbResult = this.#contactRepository.update(contactId, {favourite});
 
 		if (dbResult.error) {
 			return {error: dbResult.error}
@@ -26,17 +26,17 @@ export class ContactActionService implements IContactActionService {
 
 		await this.#contactRepository.save();
 
-		return dbResult.favourite ?? false;
+		return favourite;
     }
 
-	async addContact(contact: NewContact): Promise<Result<IContact>> {
+	async addContact(contact: NewContact): Promise<Result<Contact>> {
 		const newContact = this.#contactDomainService.create(contact);
 
 		if (newContact.error) {
 			return {error: newContact.error}
 		}
 
-		const dbResult = await this.#contactRepository.create(newContact);
+		const dbResult = this.#contactRepository.create(newContact);
 
 		if (dbResult.error) {
 			return {error: dbResult.error}
@@ -44,12 +44,12 @@ export class ContactActionService implements IContactActionService {
 
 		await this.#contactRepository.save();
 
-		return dbResult;
+		return newContact;
 	}
 
 	async deleteContact(contactId: ContactId): Promise<Result<boolean>> {
-		const dbResult = await this.#contactRepository.delete(contactId);
-		console.log(dbResult)
+		const dbResult = this.#contactRepository.delete(contactId);
+
 		if (dbResult.error) {
 			return {error: dbResult.error}
 		}
@@ -59,7 +59,7 @@ export class ContactActionService implements IContactActionService {
 		return true;
 	}
 
-	async updateContact(contactId: ContactId, contactUpdate: IContact): Promise<Result<IContact>> {
+	async updateContact(contactId: ContactId, contactUpdate: UpdateContact): Promise<Result<Contact>> {
 		const contactToUpdate = await this.#contactRepository.findOne(contactId);
 
 		if (contactToUpdate.error) {
@@ -74,7 +74,7 @@ export class ContactActionService implements IContactActionService {
 
 		contact.update(contactUpdate);
 
-		const updatedContact = await this.#contactRepository.update(contactId, contactUpdate);
+		const updatedContact = this.#contactRepository.update(contactId, contact);
 
 		if (updatedContact.error) {
 			return {error: updatedContact.error}
@@ -82,6 +82,6 @@ export class ContactActionService implements IContactActionService {
 
 		await this.#contactRepository.save();
 
-		return updatedContact;
+		return contact;
 	}
 }

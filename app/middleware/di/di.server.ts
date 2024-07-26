@@ -1,9 +1,9 @@
 import {createContainer} from "awilix";
 import {createContext} from "remix-create-express-app/context";
 import type {MiddlewareFunctionArgs} from "remix-create-express-app/middleware";
-import {type IInfrastructureDiModules, InfrastructureDiModules} from "~/.server/infrastructure/infrastructureDiModules";
-import {DomainDiModules, type IDomainDiModules} from "~/.server/domain/domainDiModules";
-import {ApplicationDiModules, type IApplicationDiModules} from "~/.server/application/applicationDiModules";
+import {type IInfrastructureDiModules, InfrastructureDiModules} from "@infrastructure/infrastructureDiModules";
+import {DomainDiModules, type IDomainDiModules} from "@domain/domainDiModules";
+import {ApplicationDiModules, type IApplicationDiModules} from "@application/applicationDiModules";
 
 export type IDiContainer = IApplicationDiModules & IDomainDiModules & IInfrastructureDiModules;
 

@@ -1,3 +1,3 @@
 import { Result } from "./Result";
 
-export type IValidator<T> = (value: T) => Result<T>;
+export type IValidator<T> = (value: unknown) => Result<T>;
