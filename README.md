@@ -13,15 +13,15 @@ npm install
 ```
 2) run to following to create the first migration
 ```shellscript
-npx mikro-orm-esm migration:create
+npm mikro-orm migration:create
 ``` 
 3) run the following to create the database and apply the migration
 ```shellscript s
-npx mikro-orm-esm migration:up
+npm mikro-orm migration:up
 ``` 
 4) seed the database
 ```shellscript s
-npx mikro-orm-esm seeder:run
+npm mikro-orm seeder:run
 ``` 
 
 ## Development
