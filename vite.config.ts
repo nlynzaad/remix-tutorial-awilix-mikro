@@ -18,4 +18,13 @@ export default defineConfig({
   build: {
     target: 'esnext'
   },
+  resolve: {
+    alias: {
+      "~/": "./app",
+      "@domain/": "./app/.server/domain",
+      "@infrastructure/": "./app/.server/infrastructure",
+      "@application/": "./app/.server/application",
+      "@shared/": "./app/.server/shared"
+    }
+  }
 });
