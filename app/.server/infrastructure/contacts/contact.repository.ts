@@ -3,7 +3,8 @@ import type {IContactRepository} from "@domain/contacts/IContactRepository";
 import {Result} from "@domain/shared/Result";
 import {ValidationError} from "zod-validation-error";
 import type {IDbService} from "@infrastructure/database/db";
-import {GenericRepository} from "@domain/GenericRepository/GenericRepository";
+
+import {GenericRepository} from "@infrastructure/GenericRepository/GenericRepository";
 
 type InjectedDependencies = {
     dbService: IDbService;

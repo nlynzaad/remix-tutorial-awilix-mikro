@@ -1,21 +1,11 @@
-import {DomainModel} from "@domain/DomainModel/DomainModel";
+import {DomainModel, type IDomainModel} from "@domain/DomainModel/DomainModel";
+import type {IDbService} from "@infrastructure/database/db";
+import type {Result} from "@domain/shared/Result";
 import {ValidationError} from "zod-validation-error";
 import pluralize from "pluralize";
-
-import type {Result} from "@domain/shared/Result";
 import type {ID} from "@domain/shared/ID";
-import type {IDbService} from "@infrastructure/database/db";
-import type {IDomainModel} from "@domain/DomainModel/DomainModel";
 import type {EntityDTO, Loaded} from "@mikro-orm/core";
-
-export interface IGenericRepository<T> {
-	findOne(Id: ID): Promise<Result<T>>;
-	findAll(): Promise<Result<T[]>>;
-	create(data: T): Result<boolean>;
-	update(id: ID, data: Partial<T>): Result<boolean>;
-	delete(id: ID): Result<boolean>;
-	save(): Promise<Result<void>>;
-}
+import type {IGenericRepository} from "@domain/GenericRepository/IGenericRepository";
 
 export class GenericRepository<T extends IDomainModel> implements IGenericRepository<T> {
 	readonly #entityName: string;
